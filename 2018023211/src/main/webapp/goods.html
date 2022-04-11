@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业物资管理系统</title>
+    <style>
+
+
+        .el-aside {
+            background-color: #545c64;
+            color: #333;
+            text-align: left;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: left;
+            line-height: 30px;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 300px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+
+    <!--新增对话框-->
+    <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="30%"
+            :before-close="handleClose1"
+            :close-on-click-modal="false">
+
+        <el-form :model="goods" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item label="物资名称" prop="name">
+                <el-input v-model="goods.name"></el-input>
+            </el-form-item>
+            <el-form-item label="库存/个" prop="number">
+                <el-input v-model="goods.number"></el-input>
+            </el-form-item>
+            <el-form-item label="待入库/个" prop="wait">
+                <el-input v-model="goods.wait"></el-input>
+            </el-form-item>
+            <el-form-item label="产品类别" prop="type">
+                <el-input v-model="goods.type"></el-input>
+            </el-form-item>
+            <el-form-item label="公司名称" prop="company">
+                <el-input v-model="goods.company"></el-input>
+            </el-form-item>
+            <el-form-item label="存储仓库" prop="storeHouse">
+                <el-select v-model="goods.storeHouse" placeholder="请选择存储仓库">
+                    <el-option label="仓库一" value="仓库一"></el-option>
+                    <el-option label="仓库二" value="仓库二"></el-option>
+                    <el-option label="仓库三" value="仓库三"></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="addGoods">确 定</el-button>
+  </span>
+    </el-dialog>
+
+    <!--修改对话框-->
+    <el-dialog
+            title="修改物资属性"
+            :visible.sync="updateDialogVisible"
+            width="30%"
+            :before-close="handleClose1"
+            :close-on-click-modal="false">
+
+        <el-form :model="updategoods" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item label="物资名称" prop="name">
+                <el-input v-model="updategoods.name"></el-input>
+            </el-form-item>
+            <el-form-item label="库存/个" prop="number">
+                <el-input v-model="updategoods.number"></el-input>
+            </el-form-item>
+            <el-form-item label="待入库/个" prop="wait">
+                <el-input v-model="updategoods.wait"></el-input>
+            </el-form-item>
+            <el-form-item label="产品类别" prop="type">
+                <el-input v-model="updategoods.type"></el-input>
+            </el-form-item>
+            <el-form-item label="公司名称" prop="company">
+                <el-input v-model="updategoods.company"></el-input>
+            </el-form-item>
+            <el-form-item label="存储仓库" prop="storeHouse">
+                <el-select v-model="updategoods.storeHouse" placeholder="请选择存储仓库">
+                    <el-option label="仓库一" value="仓库一"></el-option>
+                    <el-option label="仓库二" value="仓库二"></el-option>
+                    <el-option label="仓库三" value="仓库三"></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="updateDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="updateGoods2">确 定</el-button>
+  </span>
+    </el-dialog>
+
+    <!--主体-->
+    <el-container style="height: 920px;border: 1px solid #eee">
+
+
+        <!--侧边导航栏-->
+        <el-aside width="200px">
+
+            <el-row class="tac">
+                <el-col :span="24">
+
+                    <el-menu
+                            default-active="2"
+                            class="el-menu-vertical-demo"
+                            @open="handleOpen"
+                            @close="handleClose"
+                            background-color="#545c64"
+                            text-color="#fff"
+                            active-text-color="#ffd04b"
+                            >
+                        <el-submenu index="1">
+                            <template slot="title">
+                                <i class="el-icon-user-solid"></i>
+                                <span>用户管理</span>
+                            </template>
+                            <el-menu-item-group>
+                                <el-menu-item index="1-1">个人信息</el-menu-item>
+                                <el-menu-item index="1-2">修改密码</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-menu-item index="2">
+                            <i class="el-icon-menu"></i>
+                            <span slot="title" ><a href="/2018023211/goods.html" style='text-decoration:none;' ><font color="white">物流管理</font></a></span>
+                        </el-menu-item>
+                        <el-menu-item index="3">
+                            <i class="el-icon-document"></i>
+                            <span slot="title"><a href="/2018023211/user.html"   style='text-decoration:none;' ><font color="white">员工管理</font></a></span>
+                        </el-menu-item>
+                        <el-menu-item index="4">
+                            <i class="el-icon-setting"></i>
+                            <span slot="title"><a href="/2018023211/login.jsp"   style='text-decoration:none;' ><font color="white">退出系统</font></a></span>
+                        </el-menu-item>
+                    </el-menu>
+                </el-col>
+            </el-row>
+        </el-aside>
+        <!--主体-->
+        <el-main>
+
+
+            <!--搜索栏-->
+            <el-form :inline="true" :model="selectGoods" class="demo-form-inline">
+                <el-form-item label="编号">
+                    <el-input v-model="selectGoods.id" placeholder="编号"></el-input>
+                </el-form-item>
+                <el-form-item label="物资名称">
+                    <el-input v-model="selectGoods.name" placeholder="物资名称"></el-input>
+                </el-form-item>
+                <el-form-item label="生产公司">
+                    <el-input v-model="selectGoods.company" placeholder="生产公司"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="selectByPageAndC">查询</el-button>
+                </el-form-item>
+            </el-form>
+            <el-row>
+
+                <el-button type="primary"  plain  @click="dialogVisible = true">新增</el-button>
+                <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
+            </el-row>
+            <br>
+            <!--表格-->
+            <template>
+                <el-table
+                        :data="tableData"
+                        stripe
+                        style="width: 100%"
+                        @selection-change="handleSelectionChange">
+                    <el-table-column
+                            type="selection"
+                            width="55"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="id"
+                            label="编号"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="name"
+                            label="物资"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="number"
+                            label="库存/个">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="wait"
+                            label="待入库/个">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="storeHouse"
+                            label="存储仓库">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="type"
+                            label="产品类别">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            prop="company"
+                            label="生产公司">
+                    </el-table-column>
+                    <el-table-column label="操作" align="center">
+                        <template slot-scope="scope">
+                            <el-button type="primary" @click="updateGoods(scope.row)">修改</el-button>
+                            <el-button type="danger" @click="deleteGoods(scope.row)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <!--分页条-->
+                <div class="block">
+                    <span class="demonstration"></span>
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="currentPage"
+                            :page-sizes="[10, 15, 20, 25]"
+                            :page-size="5"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="totalCount">
+                    </el-pagination>
+                </div>
+            </template>
+
+        </el-main>
+
+    </el-container>
+
+
+</div>
+
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+<script src="js/axios-0.18.0.js"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        mounted() {
+            this.selectByPage();
+        },
+        methods: {
+            //根据分页条查询商品
+            selectByPage(){
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/2018023211/goods/selectByPage?currentPage=" +this.currentPage + "&pageSize=" + this.pageSize,
+                }).then(resp => {
+                    this.tableData = resp.data.rows;
+                    this.totalCount=resp.data.totalCount;
+                })
+            },
+            //修改商品
+            updateGoods(row) {
+                this.updateDialogVisible = true;
+              // this.updategoods=row;
+                this.updategoods.name = row.name;
+                this.updategoods.id = row.id;
+                this.updategoods.company = row.company;
+                this.updategoods.wait = row.wait;
+                this.updategoods.type=row.type;
+                this.updategoods.number = row.number;
+                this.updategoods.storeHouse = row.storeHouse;
+            },
+            updateGoods2() {
+                axios({
+                    method: 'post',
+                    url: "http://localhost:8080/2018023211/goods/updateGoods",
+                    data: this.updategoods
+                }).then(resp => {
+                    if (resp.data = "success") {
+                        this.updateDialogVisible = false;
+                        this.selectByPageAndC();
+                        this.$message({
+                            showClose: true,
+                            message: '修改成功',
+                            type: 'success'
+                        });
+                    }
+                })
+            },
+            //多选框值
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+
+            },
+            //批量删除
+            deleteByIds() {
+
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    for (let i = 0; i < this.multipleSelection.length; i++) {
+                        let multipleSelectionElement = this.multipleSelection[i];
+                        this.selectedIds[i]=multipleSelectionElement.id;
+
+                    }
+                    axios({
+                        method:"post",
+                        url:'http://localhost:8080/2018023211/goods/deleteByIds',
+                        data:this.selectedIds
+                    }).then(resp=>{
+                        if (resp.data="success"){
+                            this.selectByPageAndC();
+                            console.log(this.selectedIds);
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+
+                            });
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            //删除商品
+            deleteGoods(row) {
+                axios({
+                    method: 'post',
+                    url: 'http://localhost:8080/2018023211/goods/deleteGoods',
+                    data: row.id
+                }).then(resp => {
+                    if (resp.data = "success") {
+                        this.selectByPageAndC();
+                        this.$message({
+                            showClose: true,
+                            message: '删除成功',
+                            type: 'success'
+                        });
+                    }
+                })
+            },
+            //查询所有
+            // selectALL() {
+            //     axios({
+            //         method: "get",
+            //         url: "http://localhost:8080/2018023211/goods/selectAll"
+            //     }).then(resp => {
+            //         this.tableData = resp.data;
+            //     })
+            // },
+            //新增商品
+            addGoods() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/2018023211/goods/addGoods",
+                    data: this.goods
+                }).then(resp => {
+                    if (resp.data == "success") {
+                        this.dialogVisible = false;
+                        this.selectByPageAndC();
+                        this.$message({
+                            message: '添加成功',
+                            type: 'success'
+                        });
+                    }
+                })
+            },
+            //搜索
+            selectByPageAndC() {
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/2018023211/goods/selectByPageAndC?currentPage=" +this.currentPage + "&pageSize=" + this.pageSize,
+                    data:this.selectGoods
+                }).then(resp=>{
+                    this.tableData = resp.data.rows;
+                    this.totalCount=resp.data.totalCount;
+                })
+            },
+            //侧边栏
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            //分页条
+            handleSizeChange(val) {
+                this.pageSize=val;
+                this.selectByPageAndC();
+            },
+            handleCurrentChange(val) {
+                this.currentPage=val;
+                this.selectByPageAndC();
+            }
+        },
+        data() {
+            return {
+                //修改对话框数据模型
+                updategoods: {
+                    name: '',
+                    wait: '',
+                    number: '',
+                    storeHouse: '',
+                    type: '',
+                    company: ''
+                },
+                //新增对话框模型
+                goods: {
+                    name: '',
+                    wait: '',
+                    number: '',
+                    storeHouse: '',
+                    type: '',
+                    company: ''
+                },
+                //对话框规则
+                ruleForm: {
+                    name: '',
+                    wait: '',
+                    number: '',
+                    storeHouse: '',
+                    type: '',
+                    company: ''
+                },
+                rules: {
+                    name: [
+                        {required: true, message: '请输入物资名称', trigger: 'blur'},
+                        {min: 1, max: 100, message: '长度最少1个字符', trigger: 'blur'}
+                    ],
+                    storeHouse: [
+                        {required: true, message: '请选择存储仓库', trigger: 'change'}
+                    ],
+                    wait: [
+                        {required: true, message: '请输入待入库数', trigger: 'blur'},
+                        {min: 1, max: 5, message: '范围0-99999', trigger: 'blur'}
+                    ],
+                    number: [
+                        {required: true, message: '请输入库存数目', trigger: 'blur'},
+                        {min: 1, max: 5, message: '范围0-99999', trigger: 'blur'}
+                    ],
+                    company: [
+                        {required: true, message: '请输入生产公司', trigger: 'blur'},
+                        {min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur'}
+                    ],
+                    type: [
+                        {required: true, message: '请输入物资种类', trigger: 'blur'},
+                        {min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur'}
+                    ],
+                },
+
+                //搜索栏
+                formInline: {
+                    user: '',
+                    region: ''
+                },
+                //搜索栏数据
+                selectGoods: {
+                    id: '',
+                    name: '',
+                    company: ''
+                },
+                //总数
+                totalCount:100,
+                //表格数据
+                tableData: [],
+                //分页条
+                currentPage: 1,
+                pageSize:10,
+                //新增弹框
+                dialogVisible: false,
+                //修改弹框
+                updateDialogVisible: false,
+                //多选框数据
+                multipleSelection: [],
+                selectedIds:[]
+            }
+        }
+
+    })
+
+</script>
+
+</body>
+</html>

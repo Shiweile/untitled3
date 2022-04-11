@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业物资管理系统</title>
+    <style>
+
+
+        .el-aside {
+            background-color: #545c64;
+            color: #333;
+            text-align: left;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: left;
+            line-height: 30px;
+        }
+
+        body > .el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 300px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+
+
+    <!--主体-->
+    <el-container style="height: 920px;border: 1px solid #eee">
+
+
+        <!--侧边导航栏-->
+        <el-aside width="200px">
+
+            <el-row class="tac">
+                <el-col :span="24">
+
+                    <el-menu
+                            default-active="2"
+                            class="el-menu-vertical-demo"
+                            @open="handleOpen"
+                            @close="handleClose"
+                            background-color="#545c64"
+                            text-color="#fff"
+                            active-text-color="#ffd04b"
+                            >
+                        <el-submenu index="1">
+                            <template slot="title">
+                                <i class="el-icon-user-solid"></i>
+                                <span>用户管理</span>
+                            </template>
+                            <el-menu-item-group>
+                                <el-menu-item index="1-1">个人信息</el-menu-item>
+                                <el-menu-item index="1-2">修改密码</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-menu-item index="2">
+                            <i class="el-icon-menu"></i>
+                            <span slot="title" ><a href="/2018023211/goods.html" style='text-decoration:none;' ><font color="white">物流管理</font></a></span>
+                        </el-menu-item>
+                        <el-menu-item index="3">
+                            <i class="el-icon-document"></i>
+                            <span slot="title"><a href="/2018023211/user.html"   style='text-decoration:none;' ><font color="white">员工管理</font></a></span>
+                        </el-menu-item>
+                        <el-menu-item index="4">
+                            <i class="el-icon-setting"></i>
+                            <span slot="title">退出系统</span>
+                        </el-menu-item>
+                    </el-menu>
+                </el-col>
+            </el-row>
+        </el-aside>
+        <!--主体-->
+        <el-main>
+
+
+
+        </el-main>
+
+    </el-container>
+
+
+</div>
+
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+<script src="js/axios-0.18.0.js"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        mounted() {
+
+        },
+        methods: {
+
+            //侧边栏
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            }
+        },
+        data() {
+            return {
+
+            }
+        }
+
+    })
+
+</script>
+
+</body>
+</html>
